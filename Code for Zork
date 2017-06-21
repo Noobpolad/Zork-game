@@ -1,0 +1,401 @@
+#include <iostream>
+#include <cstdlib>
+#include <string>
+#include <ctime>
+#define QUESTION_NO 3
+
+using namespace std;
+
+struct Question {
+    string title;
+    string answer;
+    bool asked;
+};
+bool chests[2]={false,false};
+int room=0;
+int randomNum=0;
+bool secondAnswer=false;
+bool key=false;
+
+void exitRoom();
+void treasureRoom();
+void dragonRoom();
+void initQuestions(Question q[]);
+void answerRoom();
+
+int main()
+{
+    cout<<"Welcome to the ZORK game!"<<endl;
+    cout<<"List of commands: go to [north,south,west,east],open the [silver,golden] chest, open the door, ask dragon for key, exit, help."<<endl;
+
+
+    do{
+        exitRoom();
+
+        treasureRoom();
+
+        dragonRoom();
+
+        answerRoom();
+
+    }while(room<4);
+
+     return 0;
+}
+
+void exitRoom(){
+    string command;
+        if(room==0){
+            cout<<"You appeared in the strange room, there is a door at the south,looks like its locked and another way at the north."<<endl;
+        }
+    while(room==0){
+        cout<<endl;
+        cout<<"What to do ?"<<endl;
+        cout<<">";
+        getline(cin,command);
+        cout<<endl;
+        if(command=="go to north"){
+            room=1;
+        }
+        else if(command=="open the door"&&key==false){
+            cout<<"Door is locked, need to find a key"<<endl;
+        }
+        else if(command=="open the door"&&key==true){
+            cout<<"Door is opened, congratulations you escaped!"<<endl;
+            room=4;
+        }
+        else if(command=="go to south"){
+            cout<<"You see the door, looks like it locked."<<endl;
+        }
+        else if(command=="go to east"){
+            cout<<"There is nothing only the wall."<<endl;
+        }
+        else if(command=="go to west"){
+            cout<<"You see the white mountains through the window, you look down and realize that you are at very hight level, "<<endl;
+            cout<<"There is no way you can escape from here."<<endl;
+        }
+        else if(command=="exit"){
+            cout<<"Thanks for playing.";
+            room=4;
+        }
+        else if(command=="help"){
+            cout<<"The list of command you can use it this room: go to [north,south,west,east], open the door, exit."<<endl;
+        }
+        else{
+            cout<<"What do you mean ?"<<endl;
+        }
+    }
+}
+
+void treasureRoom(){
+    string command;
+    srand(time(0));
+    if(randomNum==0){
+        chests[rand()%3]=true;
+        randomNum=1;
+    }
+    if(room==1){
+        cout<<"You entered the second room, at the north you can see two chests, first is golden and second is silver"<<endl;
+        cout<<"looks like one contains poison and the other the key, at the east there is another room you can hear,"<<endl;
+        cout<<"the strange voice coming out of there, maybe you should first visit this room, before trying to open the chest?"<<endl;
+    }
+    while(room==1){
+        cout<<endl;
+        cout<<"What to do ?"<<endl;
+        cout<<">";
+        getline(cin,command);
+        cout<<endl;
+        if(command=="go to west"){
+          room=3;
+        }
+        else if(command=="go to south"){
+            room=room-1;
+        }
+        else if(command=="go to north"){
+            cout<<"There are two chests, golden one and the silver one"<<endl;
+        }
+        else if(command=="go to east"){
+            room=2;
+        }
+
+        else if(command=="open the silver chest"&&chests[0]==false){
+            cout<<"Its your lucky day, you found a key, you can escape from this madness.";
+            key=true;
+        }
+        else if(command=="open the silver chest"&&chests[0]!=false){
+            cout<<"Its not your lucky day, when you opened the chest the wave of green gas shoots in your face, you feel that you lungs refuse to breathe."<<endl;
+            room=4;
+        }
+
+        else if(command=="open the golden chest"&&chests[1]==false){
+            cout<<"Its your lucky day, you found a key.";
+            key=true;
+        }
+        else if(command=="open the golden chest"&&chests[1]!=false){
+            cout<<"Its not your lucky day, when you opened the chest the wave of green gas shoots in your face, you feel that you lungs refuse to breathe."<<endl;
+            room=4;
+        }
+        else if(command=="exit"){
+            cout<<"Thank you for playing.";
+            room=4;
+        }
+        else if(command=="help"){
+            cout<<"The list of commands you can use in this room: go to [north,south,east,west], open the[silver,golden] chest, exit."<<endl;
+        }
+        else{
+            cout<<"What do you mean ?"<<endl;
+        }
+    }
+}
+
+void dragonRoom(){
+        Question questionBank[QUESTION_NO];
+        string command;
+        string answer;
+        int r;
+        r=rand()%3;
+        if(room==2){
+            cout<<"When you enter the third room you cant believe your eyes, you see the giant creature covered by dark, steel squama,"<<endl;
+            cout<<"each time the creature take a breathe you see the fire sparks in his or her mouth, maybe its a dragon ? "<<endl;
+        }
+    while(room==2){
+        cout<<endl;
+        cout<<"What to do ?"<<endl;
+        cout<<">";
+        getline(cin,command);
+        cout<<endl;
+
+        if(command=="go to west"){
+            room=1;
+        }
+        else if(command=="go to east"){
+            cout<<"You see the dragon-like creature, in the near distance the creature look even more giant."<<endl;
+        }
+        else if(command=="ask dragon for key"&&secondAnswer!=true){
+            initQuestions(questionBank);
+            cout<<"The creature stands up at looks at you with the eyes full of rage, looks like you disturbed it "<<endl;
+            cout<<"but when you ask the question the creature changes the face, looks like it interested in giving the puzzles,"<<endl;
+            cout<<"you need to answer the question if you want to know the answer."<<endl;
+            cout<<endl;
+            cout<<"Q: "<<questionBank[r].title<<endl;
+            cout<<"A: ";
+            cin >> answer;
+            if(questionBank[r].answer==answer&&chests[0]==false){
+                cout<<"You impressed me the human, the key is in the silver chest, now go i want to sleep."<<endl;
+                secondAnswer=true;
+            }
+            else if(questionBank[r].answer==answer&&chests[1]==false){
+                cout<<endl;
+                cout<<"You impressed me the human, the key is in the golden chest, now go i want to sleep."<<endl;
+                secondAnswer=true;
+            }
+            else{
+                secondAnswer=true;
+                cout<<"You don t deserve to know the answer, go away!"<<endl;
+            }
+        }
+        else if(command=="ask dragon for key"&&secondAnswer==true){
+            cout<<"I have nothing to tell you.Go away!"<<endl;
+        }
+        else if(command=="go to north"){
+            cout<<"There is nothing only the wall."<<endl;
+        }
+        else if(command=="go to south"){
+            cout<<"There is nothing only the wall."<<endl;
+        }
+        else if(command=="exit"){
+            cout<<"Thank you for playing.";
+            room=4;
+        }
+        else if(command=="help"){
+            cout<<"List of commands you can use in this room: go to [north,south,east,west], ask dragon for key, exit."<<endl;
+        }
+        else{
+            cout<<"What do you mean ?"<<endl;
+        }
+    }
+}
+
+void answerRoom(){
+    int playersHealthPoints=100;
+    int quardiansHealthPoints=100;
+    string command;
+    string typeOfWeapon;
+    string fightCommand;
+    int weapon=0;
+    int hitChance;
+    bool playersTurn=true;
+    if(room==3){
+        cout<<"You entered the light room, at the south you can see the table with some sort of weapon equipment."<<endl;
+        cout<<"At the deep west you see the skeleton looks like his not very friendly, but he does not attack you,"<<endl;
+        cout<<"looks like he protects something."<<endl;
+    }
+    while(room==3){
+            cout<<"What to do ?"<<endl;
+            cout<<">";
+            getline(cin,command);
+            cout<<endl;
+            if(command=="go to east"){
+                room=1;
+            }
+
+            else if(command=="go to north"){
+                cout<<"There is nothing only the wall."<<endl<<endl;
+            }
+
+            else if (command=="go to south"&&weapon==0){
+                cout<<"You can see the 3 types of weapon and you can take only one:The Hammer, the Sword and a Spear."<<endl;
+                cout<<"Each type of weapon has its own characteristics:"<<endl;
+                cout<<"The Hammer:DMG per hit-60, accuracy-30%."<<endl;
+                cout<<"The Spear:DMG per hit-45, accuracy-50%."<<endl;
+                cout<<"The Sword:DMG per hit-20, accuracy-80%."<<endl<<endl;
+                while(weapon==0){
+                    cout<<"What do you choose ?"<<endl;
+                    cout<<">";
+                    getline(cin,typeOfWeapon);
+                    cout<<endl;
+                    if(typeOfWeapon=="take the hammer"){
+                        weapon=1;
+                        cout<<"You got the hammer."<<endl<<endl;
+                    }
+                    else if(typeOfWeapon=="take the spear"){
+                        weapon=2;
+                        cout<<"You got the spear."<<endl<<endl;
+                    }
+                    else if(typeOfWeapon=="take the sword"){
+                        weapon=3;
+                        cout<<"You got the sword."<<endl<<endl;
+                    }
+                    else{
+                        cout<<"What do you mean ? Chose again please."<<endl;
+                        weapon=0;
+                    }
+                }
+            }
+            else if (command=="go to south"&&weapon!=0){
+                cout<<"You have already got the weapon, you have nothing to do there."<<endl<<endl;
+            }
+            else if(command=="go to west"){
+                cout<<"You see the skeleton guardian, looks like he protects some sort of scroll."<<endl<<endl;
+            }
+            else if(command=="attack the skeleton"&&weapon==0){
+                cout<<"First you need to take a weapon."<<endl<<endl;
+            }
+            else if(command=="attack the skeleton"&&weapon!=0&&quardiansHealthPoints>0){
+                cout<<"You join the fight!"<<endl;
+                do{
+                    if(playersTurn==true){
+                        cout<<"Its your turn now."<<endl<<endl;
+                        cout<<"Your HP:"<<playersHealthPoints<<endl<<endl;
+                        cout<<"Enemy's HP:"<<quardiansHealthPoints<<endl<<endl;
+                        cout<<"What's your fight command ?"<<endl;
+                        cout<<">";
+                        getline(cin,fightCommand);
+                        cout<<endl;
+                        if(fightCommand=="hit the skeleton"&&weapon==1){
+                            hitChance=rand()%10;
+                            if(hitChance<=2){
+                                quardiansHealthPoints=quardiansHealthPoints-60;
+                                cout<<"Nice hit!"<<endl;
+                                cout<<"Enemy's HP:"<<quardiansHealthPoints<<endl<<endl;
+                                playersTurn=false;
+                            }
+                            else{
+                                cout<<"Ahh you missed!"<<endl;
+                                cout<<"Enemy's HP:"<<quardiansHealthPoints<<endl<<endl;
+                                playersTurn=false;
+                            }
+                        }
+                        else if(fightCommand=="hit the skeleton"&&weapon==2){
+                            hitChance=rand()%10;
+                            if(hitChance<=4){
+                                quardiansHealthPoints=quardiansHealthPoints-45;
+                                cout<<"Nice hit!"<<endl;
+                                cout<<"Enemy's HP:"<<quardiansHealthPoints<<endl<<endl;
+                                playersTurn=false;
+                            }
+                            else{
+                                cout<<"Ahh you missed!"<<endl;
+                                cout<<"Enemy's HP:"<<quardiansHealthPoints<<endl<<endl;
+                                playersTurn=false;
+                            }
+                        }
+                        else if(fightCommand=="hit the skeleton"&&weapon==3){
+                            hitChance=rand()%10;
+                            if(hitChance<=7){
+                                quardiansHealthPoints=quardiansHealthPoints-20;
+                                cout<<"Nice hit!"<<endl;
+                                cout<<"Enemy's HP:"<<quardiansHealthPoints<<endl<<endl;
+                                playersTurn=false;
+                            }
+                            else{
+                                cout<<"Ahh you missed!"<<endl;
+                                cout<<"Enemy's HP:"<<quardiansHealthPoints<<endl<<endl;
+                                playersTurn=false;
+                            }
+                        }
+                        else{
+                            cout<<"Repeat the command, please."<<endl;
+                        }
+                    }
+                    else if(playersTurn==false){
+                        cout<<"Now its the skeletons turn."<<endl<<endl;
+                        hitChance=rand()%10;
+                        if(hitChance<=2){
+                            cout<<"The skeleton hurts you."<<endl;
+                            playersHealthPoints=playersHealthPoints-20;
+                            cout<<"Your HP:"<<playersHealthPoints<<endl<<endl;
+                            playersTurn=true;
+                        }
+                        else{
+                            cout<<"You dodged the attack hahaha!!!"<<endl;
+                            cout<<"Your HP:"<<playersHealthPoints<<endl<<endl;
+                            playersTurn=true;
+                        }
+                    }
+                }while(playersHealthPoints>0&&quardiansHealthPoints>0);
+
+            if(playersHealthPoints<=0){
+                cout<<"You have been defeated by the skeleton, END OF THE GAME."<<endl;
+                room=4;
+            }
+            else if(quardiansHealthPoints<=0){
+                cout<<"You have defeated the skeleton, now you can read the scroll."<<endl<<endl;
+            }
+        }
+
+
+            else if (command=="read the scroll"&&quardiansHealthPoints<=0){
+                cout<<"Now you are able to read the scroll, looks like here was written the answers for some questions:"<<endl;
+                cout<<"THE NAME OF THE PROGRAM CREATOR IS: POLAD"<<endl;
+                cout<<"THE NAME OF CREATORS PROFESSOR IS: GEORGE"<<endl;
+                cout<<"THE NAME OF THIS PROGRAM IS: ZORK"<<endl;
+            }
+
+            else if(command=="read the scroll"&&quardiansHealthPoints>0){
+                cout<<"You must first defeat the skeleton, if you want to read the scroll."<<endl;
+            }
+
+            else if(command=="exit"){
+                cout<<"Thank you for playing.";
+                room=4;
+            }
+
+            else{
+                cout<<"What do you mean ?"<<endl<<endl;
+            }
+    }
+}
+
+void initQuestions(Question q[]) {
+    q[0].title = "What is the name of this program creator ?";
+    q[0].answer = "polad";
+    q[1].title = "What is the name of c++ professor ?";
+    q[1].answer = "george";
+    q[2].title = "What is the name of this game ?";
+    q[2].answer = "zork";
+
+    for(int i = 0; i < QUESTION_NO; i++) {
+        q[i].asked = false;
+    }
+}
